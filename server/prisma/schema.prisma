@@ -1,0 +1,25 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model User {
+  id           Int      @id @default(autoincrement())
+  email        String   @unique
+  passwordHash String
+  createdAt    DateTime @default(now())
+  account      Account?
+}
+
+model Account {
+  id            Int      @id @default(autoincrement())
+  accountNumber String   @unique
+  balanceCents  Int      @default(5000000)
+  userId        Int      @unique
+  user          User     @relation(fields: [userId], references: [id])
+  createdAt     DateTime @default(now())
+}
