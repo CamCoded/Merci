@@ -22,4 +22,16 @@ model Account {
   userId        Int      @unique
   user          User     @relation(fields: [userId], references: [id])
   createdAt     DateTime @default(now())
+  transactions  Transaction[]
+}
+
+model Transaction {
+
+  id                Int      @id @default(autoincrement())
+  type              String   // "DEPOSIT" or "WITHDRAWAL"
+  amountCents       Int      // always positive; the type says which direction
+  balanceAfterCents Int      // the balance right after this transaction
+  accountId         Int
+  account           Account  @relation(fields: [accountId], references: [id])
+  createdAt         DateTime @default(now())
 }
