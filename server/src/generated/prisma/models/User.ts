@@ -28,12 +28,10 @@ export type AggregateUser = {
 
 export type UserAvgAggregateOutputType = {
   id: number | null
-  failedLoginCount: number | null
 }
 
 export type UserSumAggregateOutputType = {
   id: number | null
-  failedLoginCount: number | null
 }
 
 export type UserMinAggregateOutputType = {
@@ -41,8 +39,6 @@ export type UserMinAggregateOutputType = {
   email: string | null
   passwordHash: string | null
   createdAt: Date | null
-  failedLoginCount: number | null
-  lockedUntil: Date | null
 }
 
 export type UserMaxAggregateOutputType = {
@@ -50,8 +46,6 @@ export type UserMaxAggregateOutputType = {
   email: string | null
   passwordHash: string | null
   createdAt: Date | null
-  failedLoginCount: number | null
-  lockedUntil: Date | null
 }
 
 export type UserCountAggregateOutputType = {
@@ -59,20 +53,16 @@ export type UserCountAggregateOutputType = {
   email: number
   passwordHash: number
   createdAt: number
-  failedLoginCount: number
-  lockedUntil: number
   _all: number
 }
 
 
 export type UserAvgAggregateInputType = {
   id?: true
-  failedLoginCount?: true
 }
 
 export type UserSumAggregateInputType = {
   id?: true
-  failedLoginCount?: true
 }
 
 export type UserMinAggregateInputType = {
@@ -80,8 +70,6 @@ export type UserMinAggregateInputType = {
   email?: true
   passwordHash?: true
   createdAt?: true
-  failedLoginCount?: true
-  lockedUntil?: true
 }
 
 export type UserMaxAggregateInputType = {
@@ -89,8 +77,6 @@ export type UserMaxAggregateInputType = {
   email?: true
   passwordHash?: true
   createdAt?: true
-  failedLoginCount?: true
-  lockedUntil?: true
 }
 
 export type UserCountAggregateInputType = {
@@ -98,8 +84,6 @@ export type UserCountAggregateInputType = {
   email?: true
   passwordHash?: true
   createdAt?: true
-  failedLoginCount?: true
-  lockedUntil?: true
   _all?: true
 }
 
@@ -194,8 +178,6 @@ export type UserGroupByOutputType = {
   email: string
   passwordHash: string
   createdAt: Date
-  failedLoginCount: number
-  lockedUntil: Date | null
   _count: UserCountAggregateOutputType | null
   _avg: UserAvgAggregateOutputType | null
   _sum: UserSumAggregateOutputType | null
@@ -226,8 +208,6 @@ export type UserWhereInput = {
   email?: Prisma.StringFilter<"User"> | string
   passwordHash?: Prisma.StringFilter<"User"> | string
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
-  failedLoginCount?: Prisma.IntFilter<"User"> | number
-  lockedUntil?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
   account?: Prisma.XOR<Prisma.AccountNullableScalarRelationFilter, Prisma.AccountWhereInput> | null
 }
 
@@ -236,8 +216,6 @@ export type UserOrderByWithRelationInput = {
   email?: Prisma.SortOrder
   passwordHash?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
-  failedLoginCount?: Prisma.SortOrder
-  lockedUntil?: Prisma.SortOrderInput | Prisma.SortOrder
   account?: Prisma.AccountOrderByWithRelationInput
 }
 
@@ -249,8 +227,6 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   NOT?: Prisma.UserWhereInput | Prisma.UserWhereInput[]
   passwordHash?: Prisma.StringFilter<"User"> | string
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
-  failedLoginCount?: Prisma.IntFilter<"User"> | number
-  lockedUntil?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
   account?: Prisma.XOR<Prisma.AccountNullableScalarRelationFilter, Prisma.AccountWhereInput> | null
 }, "id" | "email">
 
@@ -259,8 +235,6 @@ export type UserOrderByWithAggregationInput = {
   email?: Prisma.SortOrder
   passwordHash?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
-  failedLoginCount?: Prisma.SortOrder
-  lockedUntil?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.UserCountOrderByAggregateInput
   _avg?: Prisma.UserAvgOrderByAggregateInput
   _max?: Prisma.UserMaxOrderByAggregateInput
@@ -276,16 +250,12 @@ export type UserScalarWhereWithAggregatesInput = {
   email?: Prisma.StringWithAggregatesFilter<"User"> | string
   passwordHash?: Prisma.StringWithAggregatesFilter<"User"> | string
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"User"> | Date | string
-  failedLoginCount?: Prisma.IntWithAggregatesFilter<"User"> | number
-  lockedUntil?: Prisma.DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null
 }
 
 export type UserCreateInput = {
   email: string
   passwordHash: string
   createdAt?: Date | string
-  failedLoginCount?: number
-  lockedUntil?: Date | string | null
   account?: Prisma.AccountCreateNestedOneWithoutUserInput
 }
 
@@ -294,8 +264,6 @@ export type UserUncheckedCreateInput = {
   email: string
   passwordHash: string
   createdAt?: Date | string
-  failedLoginCount?: number
-  lockedUntil?: Date | string | null
   account?: Prisma.AccountUncheckedCreateNestedOneWithoutUserInput
 }
 
@@ -303,8 +271,6 @@ export type UserUpdateInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  failedLoginCount?: Prisma.IntFieldUpdateOperationsInput | number
-  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   account?: Prisma.AccountUpdateOneWithoutUserNestedInput
 }
 
@@ -313,8 +279,6 @@ export type UserUncheckedUpdateInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  failedLoginCount?: Prisma.IntFieldUpdateOperationsInput | number
-  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   account?: Prisma.AccountUncheckedUpdateOneWithoutUserNestedInput
 }
 
@@ -323,16 +287,12 @@ export type UserCreateManyInput = {
   email: string
   passwordHash: string
   createdAt?: Date | string
-  failedLoginCount?: number
-  lockedUntil?: Date | string | null
 }
 
 export type UserUpdateManyMutationInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  failedLoginCount?: Prisma.IntFieldUpdateOperationsInput | number
-  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type UserUncheckedUpdateManyInput = {
@@ -340,8 +300,6 @@ export type UserUncheckedUpdateManyInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  failedLoginCount?: Prisma.IntFieldUpdateOperationsInput | number
-  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type UserCountOrderByAggregateInput = {
@@ -349,13 +307,10 @@ export type UserCountOrderByAggregateInput = {
   email?: Prisma.SortOrder
   passwordHash?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
-  failedLoginCount?: Prisma.SortOrder
-  lockedUntil?: Prisma.SortOrder
 }
 
 export type UserAvgOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  failedLoginCount?: Prisma.SortOrder
 }
 
 export type UserMaxOrderByAggregateInput = {
@@ -363,8 +318,6 @@ export type UserMaxOrderByAggregateInput = {
   email?: Prisma.SortOrder
   passwordHash?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
-  failedLoginCount?: Prisma.SortOrder
-  lockedUntil?: Prisma.SortOrder
 }
 
 export type UserMinOrderByAggregateInput = {
@@ -372,13 +325,10 @@ export type UserMinOrderByAggregateInput = {
   email?: Prisma.SortOrder
   passwordHash?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
-  failedLoginCount?: Prisma.SortOrder
-  lockedUntil?: Prisma.SortOrder
 }
 
 export type UserSumOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  failedLoginCount?: Prisma.SortOrder
 }
 
 export type UserScalarRelationFilter = {
@@ -402,10 +352,6 @@ export type IntFieldUpdateOperationsInput = {
   divide?: number
 }
 
-export type NullableDateTimeFieldUpdateOperationsInput = {
-  set?: Date | string | null
-}
-
 export type UserCreateNestedOneWithoutAccountInput = {
   create?: Prisma.XOR<Prisma.UserCreateWithoutAccountInput, Prisma.UserUncheckedCreateWithoutAccountInput>
   connectOrCreate?: Prisma.UserCreateOrConnectWithoutAccountInput
@@ -424,8 +370,6 @@ export type UserCreateWithoutAccountInput = {
   email: string
   passwordHash: string
   createdAt?: Date | string
-  failedLoginCount?: number
-  lockedUntil?: Date | string | null
 }
 
 export type UserUncheckedCreateWithoutAccountInput = {
@@ -433,8 +377,6 @@ export type UserUncheckedCreateWithoutAccountInput = {
   email: string
   passwordHash: string
   createdAt?: Date | string
-  failedLoginCount?: number
-  lockedUntil?: Date | string | null
 }
 
 export type UserCreateOrConnectWithoutAccountInput = {
@@ -457,8 +399,6 @@ export type UserUpdateWithoutAccountInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  failedLoginCount?: Prisma.IntFieldUpdateOperationsInput | number
-  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type UserUncheckedUpdateWithoutAccountInput = {
@@ -466,8 +406,6 @@ export type UserUncheckedUpdateWithoutAccountInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  failedLoginCount?: Prisma.IntFieldUpdateOperationsInput | number
-  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 
@@ -477,8 +415,6 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   email?: boolean
   passwordHash?: boolean
   createdAt?: boolean
-  failedLoginCount?: boolean
-  lockedUntil?: boolean
   account?: boolean | Prisma.User$accountArgs<ExtArgs>
 }, ExtArgs["result"]["user"]>
 
@@ -487,8 +423,6 @@ export type UserSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   email?: boolean
   passwordHash?: boolean
   createdAt?: boolean
-  failedLoginCount?: boolean
-  lockedUntil?: boolean
 }, ExtArgs["result"]["user"]>
 
 export type UserSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -496,8 +430,6 @@ export type UserSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   email?: boolean
   passwordHash?: boolean
   createdAt?: boolean
-  failedLoginCount?: boolean
-  lockedUntil?: boolean
 }, ExtArgs["result"]["user"]>
 
 export type UserSelectScalar = {
@@ -505,11 +437,9 @@ export type UserSelectScalar = {
   email?: boolean
   passwordHash?: boolean
   createdAt?: boolean
-  failedLoginCount?: boolean
-  lockedUntil?: boolean
 }
 
-export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "email" | "passwordHash" | "createdAt" | "failedLoginCount" | "lockedUntil", ExtArgs["result"]["user"]>
+export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "email" | "passwordHash" | "createdAt", ExtArgs["result"]["user"]>
 export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   account?: boolean | Prisma.User$accountArgs<ExtArgs>
 }
@@ -526,8 +456,6 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     email: string
     passwordHash: string
     createdAt: Date
-    failedLoginCount: number
-    lockedUntil: Date | null
   }, ExtArgs["result"]["user"]>
   composites: {}
 }
@@ -956,8 +884,6 @@ export interface UserFieldRefs {
   readonly email: Prisma.FieldRef<"User", 'String'>
   readonly passwordHash: Prisma.FieldRef<"User", 'String'>
   readonly createdAt: Prisma.FieldRef<"User", 'DateTime'>
-  readonly failedLoginCount: Prisma.FieldRef<"User", 'Int'>
-  readonly lockedUntil: Prisma.FieldRef<"User", 'DateTime'>
 }
     
 

@@ -8,9 +8,18 @@ import jwt from "jsonwebtoken";
 const router = Router();
 
 const credentials = z.object({
-  email: z.string().email(),
-  password: z.string().min(8),
+  // Trim spaces and lowercase, so " Cam@Merci.dev" and "cam@merci.dev" are the same account
+  email: z.string().trim().toLowerCase().email(),
+  // bcrypt ignores everything past 72 bytes, so cap passwords well under that
+  password: z.string().min(8).max(64),
 });
+
+// bcrypt cost; registration and the dummy hash must match so timing is identical
+const BCRYPT_ROUNDS = 10;
+
+// A real bcrypt hash of a throwaway password, made once when the server starts.
+// Unknown emails get checked against it, so every login takes the same time.
+const DUMMY_HASH = bcrypt.hashSync("not-a-real-password", BCRYPT_ROUNDS);
 
 // Lockout settings, kept in one place so they're easy to change
 const MAX_FAILED_ATTEMPTS = 5;
@@ -24,7 +33,10 @@ const emailLimiter = rateLimit({
   windowMs: LOCK_MINUTES * 60 * 1000,
   limit: MAX_FAILED_ATTEMPTS,
   skipSuccessfulRequests: true, // successful logins don't count
-  keyGenerator: (req) => String(req.body?.email ?? "").trim().toLowerCase(),
+  keyGenerator: (req) =>
+    String(req.body?.email ?? "")
+      .trim()
+      .toLowerCase(),
   standardHeaders: "draft-8",
   legacyHeaders: false,
   // Same message as Layer 2, so attackers can't tell which limit they hit
@@ -48,9 +60,9 @@ function makeAccountNumber() {
 router.post("/register", async (req, res) => {
   const parsed = credentials.safeParse(req.body);
   if (!parsed.success) {
-    return res
-      .status(400)
-      .json({ error: "Enter a valid email and a password of 8+ characters." });
+    return res.status(400).json({
+      error: "Enter a valid email and a password of 8 to 64 characters.",
+    }); // ← changed
   }
 
   const { email, password } = parsed.data;
@@ -62,7 +74,7 @@ router.post("/register", async (req, res) => {
       .json({ error: "An account with that email already exists." });
   }
 
-  const passwordHash = await bcrypt.hash(password, 10);
+  const passwordHash = await bcrypt.hash(password, BCRYPT_ROUNDS); // ← changed
 
   const user = await prisma.user.create({
     data: {
@@ -90,13 +102,14 @@ router.post("/login", loginLimiter, emailLimiter, async (req, res) => {
   const { email, password } = parsed.data;
   const user = await prisma.user.findUnique({ where: { email } });
 
-  if (!user) {
-    return res.status(401).json({ error: "Invalid email or password." });
-  }
+  // Always run bcrypt, even when the email doesn't exist,
+  // so the response time can't reveal which emails have accounts
+  const passwordMatches = await bcrypt.compare(
+    password,
+    user?.passwordHash ?? DUMMY_HASH,
+  );
 
-  const passwordMatches = await bcrypt.compare(password, user.passwordHash);
-
-  if (!passwordMatches) {
+  if (!user || !passwordMatches) {
     return res.status(401).json({ error: "Invalid email or password." });
   }
 
