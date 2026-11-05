@@ -53,16 +53,26 @@ const loginLimiter = rateLimit({
   message: { error: "Too many login attempts. Try again in 15 minutes." },
 });
 
+// Layer 3: blocks a DEVICE after 10 sign-ups in an hour,
+// so scripts can't spam accounts or mass-check which emails are taken
+const registerLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000, // 1 hour, in milliseconds
+  limit: 10, // every sign-up attempt counts, successful or not
+  standardHeaders: "draft-8",
+  legacyHeaders: false,
+  message: { error: "Too many sign-up attempts. Try again in an hour." },
+});
+
 function makeAccountNumber() {
   return Math.floor(1_000_000_000 + Math.random() * 9_000_000_000).toString();
 }
 
-router.post("/register", async (req, res) => {
+router.post("/register", registerLimiter, async (req, res) => {
   const parsed = credentials.safeParse(req.body);
   if (!parsed.success) {
     return res.status(400).json({
       error: "Enter a valid email and a password of 8 to 64 characters.",
-    }); // ← changed
+    }); 
   }
 
   const { email, password } = parsed.data;
