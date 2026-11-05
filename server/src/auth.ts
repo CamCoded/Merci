@@ -5,19 +5,33 @@ import { prisma } from "./db.js";
 import { rateLimit } from "express-rate-limit";
 import jwt from "jsonwebtoken";
 
-// Limits how many requests one device can make
-
 const router = Router();
 
 const credentials = z.object({
   email: z.string().email(),
   password: z.string().min(8),
 });
+
 // Lockout settings, kept in one place so they're easy to change
 const MAX_FAILED_ATTEMPTS = 5;
 const LOCK_MINUTES = 15;
 
-// Layer 2: blocks a device after 20 failed logins in 15 minutes
+// Layer 1: blocks an EMAIL after 5 failed logins in 15 minutes.
+// It counts any email typed in, real account or not,
+// so the lockout can't be used to find out who has an account.
+// The count goes up the instant a request arrives, so parallel requests can't sneak past.
+const emailLimiter = rateLimit({
+  windowMs: LOCK_MINUTES * 60 * 1000,
+  limit: MAX_FAILED_ATTEMPTS,
+  skipSuccessfulRequests: true, // successful logins don't count
+  keyGenerator: (req) => String(req.body?.email ?? "").trim().toLowerCase(),
+  standardHeaders: "draft-8",
+  legacyHeaders: false,
+  // Same message as Layer 2, so attackers can't tell which limit they hit
+  message: { error: "Too many login attempts. Try again in 15 minutes." },
+});
+
+// Layer 2: blocks a DEVICE after 20 failed logins in 15 minutes
 const loginLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes, in milliseconds
   limit: 20, // max failed attempts per device in that window
@@ -66,8 +80,8 @@ router.post("/register", async (req, res) => {
   });
 });
 
-// Handle POST /auth/login; loginLimiter runs first, like middleware
-router.post("/login", loginLimiter, async (req, res) => {
+// Handle POST /auth/login; both limiters run first, like middleware
+router.post("/login", loginLimiter, emailLimiter, async (req, res) => {
   const parsed = credentials.safeParse(req.body);
   if (!parsed.success) {
     return res.status(401).json({ error: "Invalid email or password." });
@@ -80,51 +94,11 @@ router.post("/login", loginLimiter, async (req, res) => {
     return res.status(401).json({ error: "Invalid email or password." });
   }
 
-  // Layer 1: is this account locked right now?
-  if (user.lockedUntil && user.lockedUntil > new Date()) {
-    // Work out how many minutes are left, rounded up
-    const minutesLeft = Math.ceil(
-      (user.lockedUntil.getTime() - Date.now()) / 60000,
-    );
-    // 429 = too many requests
-    return res.status(429).json({
-      error: `Too many attempts. Try again in ${minutesLeft} minute${minutesLeft === 1 ? "" : "s"}.`,
-    });
-  }
-
   const passwordMatches = await bcrypt.compare(password, user.passwordHash);
 
   if (!passwordMatches) {
-    // Count this failure
-    const failures = user.failedLoginCount + 1;
-
-    if (failures >= MAX_FAILED_ATTEMPTS) {
-      // Hit the limit: lock the account and reset the counter
-      await prisma.user.update({
-        where: { id: user.id },
-        data: {
-          failedLoginCount: 0,
-          lockedUntil: new Date(Date.now() + LOCK_MINUTES * 60 * 1000),
-        },
-      });
-      return res.status(429).json({
-        error: `Too many attempts. Try again in ${LOCK_MINUTES} minutes.`,
-      });
-    }
-
-    // Under the limit: just save the new count
-    await prisma.user.update({
-      where: { id: user.id },
-      data: { failedLoginCount: failures },
-    });
     return res.status(401).json({ error: "Invalid email or password." });
   }
-
-  // Correct password: clear any failures and any old lock
-  await prisma.user.update({
-    where: { id: user.id },
-    data: { failedLoginCount: 0, lockedUntil: null },
-  });
 
   const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET!, {
     expiresIn: "1h",

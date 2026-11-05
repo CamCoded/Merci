@@ -5,8 +5,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "tsx watch src/index.ts",
-    "unlock": "tsx src/dev-unlock.ts"
+    "dev": "tsx watch src/index.ts"
   },
   "keywords": [],
   "author": "",

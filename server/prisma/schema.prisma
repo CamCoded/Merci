@@ -13,8 +13,7 @@ model User {
   passwordHash String
   createdAt    DateTime @default(now())
   account      Account?
-  failedLoginCount Int       @default(0)   // wrong passwords in a row
-  lockedUntil      DateTime?               // empty unless locked; "?" means it can be empty
+
 }
 
 model Account {
