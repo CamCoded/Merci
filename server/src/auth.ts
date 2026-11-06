@@ -4,6 +4,7 @@ import { z } from "zod";
 import { prisma } from "./db.js";
 import { rateLimit } from "express-rate-limit";
 import jwt from "jsonwebtoken";
+import { randomInt } from "node:crypto";
 
 const router = Router();
 
@@ -64,7 +65,9 @@ const registerLimiter = rateLimit({
 });
 
 function makeAccountNumber() {
-  return Math.floor(1_000_000_000 + Math.random() * 9_000_000_000).toString();
+  // randomInt uses the operating system's secure random source, so numbers can't be predicted.
+  // The top is exclusive: this gives 1000000000 to 9999999999, always 10 digits.
+  return randomInt(1_000_000_000, 10_000_000_000).toString();
 }
 
 router.post("/register", registerLimiter, async (req, res) => {
